@@ -13,7 +13,7 @@ Analyse exploratoire
 Visualisation des données
 Interprétation des résultats
 Communication des insights
-Utilisation d'outils tels que SQL, Spreadsheet/Excel, Tableau et pyston
+Utilisation d'outils tels que SQL, Spreadsheet/Excel, Tableau et python
 
 Cette formation m'a permis d'obtenir la certification Google Data Analytics Professional Certificate, attestant de ma maîtrise des fondamentaux de l'analyse de données.
 
