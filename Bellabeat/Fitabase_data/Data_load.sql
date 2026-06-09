@@ -1,20 +1,21 @@
--- ============================================================================
--- 1. PRÉPARATION DE L'ENVIRONNEMENT ET CONNEXION
--- ============================================================================
+-- f --
 
--- Crée la base de données si elle n'existe pas encore
-CREATE DATABASE IF NOT EXISTS bellabeat_db;
+-- 1. Création et sélection de la base de données
+CREATE DATABASE IF NOT EXISTS fitbit_bellabeat_db;
+USE fitbit_bellabeat_db;
 
--- CONNEXION : Indique à SQL d'utiliser cette base de données pour la suite
-USE bellabeat_db;
+-- =========================================================================
+-- 2. CRÉATION DES TABLES
+-- =========================================================================
 
--- ============================================================================
--- 1. CRÉATION DES TABLES
--- ============================================================================
+CREATE TABLE users (
+    id BIGINT NOT NULL,
+    CONSTRAINT PK_users PRIMARY KEY (id)
+);
 
-CREATE TABLE IF NOT EXISTS daily_activity (
-    Id BIGINT,
-    ActivityDate VARCHAR(50),
+CREATE TABLE daily_activity (
+    id BIGINT NOT NULL,
+    ActivityDate VARCHAR(50) NOT NULL,
     TotalSteps INT,
     TotalDistance DOUBLE,
     TrackerDistance DOUBLE,
@@ -27,24 +28,30 @@ CREATE TABLE IF NOT EXISTS daily_activity (
     FairlyActiveMinutes INT,
     LightlyActiveMinutes INT,
     SedentaryMinutes INT,
-    Calories INT
+    Calories INT,
+    CONSTRAINT PK_daily_activity PRIMARY KEY (id, ActivityDate),
+    CONSTRAINT FK_daily_activity_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
-CREATE TABLE IF NOT EXISTS daily_calories (
-    Id BIGINT,
-    ActivityDay VARCHAR(50),
-    Calories INT
+CREATE TABLE daily_calories (
+    id BIGINT NOT NULL,
+    ActivityDay VARCHAR(50) NOT NULL,
+    Calories INT,
+    CONSTRAINT PK_daily_calories PRIMARY KEY (id, ActivityDay),
+    CONSTRAINT FK_daily_calories_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
-CREATE TABLE IF NOT EXISTS daily_steps (
-    Id BIGINT,
-    ActivityDay VARCHAR(50),
-    StepTotal INT
+CREATE TABLE daily_steps (
+    id BIGINT NOT NULL,
+    ActivityDay VARCHAR(50) NOT NULL,
+    StepTotal INT,
+    CONSTRAINT PK_daily_steps PRIMARY KEY (id, ActivityDay),
+    CONSTRAINT FK_daily_steps_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
-CREATE TABLE IF NOT EXISTS daily_intensities (
-    Id BIGINT,
-    ActivityDay VARCHAR(50),
+CREATE TABLE daily_intensities (
+    id BIGINT NOT NULL,
+    ActivityDay VARCHAR(50) NOT NULL,
     SedentaryMinutes INT,
     LightlyActiveMinutes INT,
     FairlyActiveMinutes INT,
@@ -52,88 +59,114 @@ CREATE TABLE IF NOT EXISTS daily_intensities (
     SedentaryActiveDistance DOUBLE,
     LightActiveDistance DOUBLE,
     ModeratelyActiveDistance DOUBLE,
-    VeryActiveDistance DOUBLE
+    VeryActiveDistance DOUBLE,
+    CONSTRAINT PK_daily_intensities PRIMARY KEY (id, ActivityDay),
+    CONSTRAINT FK_daily_intensities_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
-CREATE TABLE IF NOT EXISTS hourly_calories (
-    Id BIGINT,
-    ActivityHour VARCHAR(50),
-    Calories INT
-);
-
-CREATE TABLE IF NOT EXISTS hourly_steps (
-    Id BIGINT,
-    ActivityHour VARCHAR(50),
-    StepTotal INT
-);
-
-CREATE TABLE IF NOT EXISTS hourly_intensities (
-    Id BIGINT,
-    ActivityHour VARCHAR(50),
-    TotalIntensity INT,
-    AverageIntensity DOUBLE
-);
-
-CREATE TABLE IF NOT EXISTS minute_calories (
-    Id BIGINT,
-    ActivityMinute VARCHAR(50),
-    Calories DOUBLE
-);
-
-CREATE TABLE IF NOT EXISTS minute_steps (
-    Id BIGINT,
-    ActivityMinute VARCHAR(50),
-    Steps INT
-);
-
-CREATE TABLE IF NOT EXISTS minute_intensities (
-    Id BIGINT,
-    ActivityMinute VARCHAR(50),
-    Intensity INT
-);
-
-CREATE TABLE IF NOT EXISTS minute_mets (
-    Id BIGINT,
-    ActivityMinute VARCHAR(50),
-    METs INT
-);
-
-CREATE TABLE IF NOT EXISTS minute_sleep (
-    Id BIGINT,
-    date VARCHAR(50),
-    value INT,
-    logId BIGINT
-);
-
-CREATE TABLE IF NOT EXISTS heartrate_seconds (
-    Id BIGINT,
-    Time VARCHAR(50),
-    Value INT
-);
-
-CREATE TABLE IF NOT EXISTS sleep_day (
-    Id BIGINT,
-    SleepDay VARCHAR(50),
+CREATE TABLE sleepy_day (
+    id BIGINT NOT NULL,
+    SleepDay VARCHAR(50) NOT NULL,
     TotalSleepRecords INT,
     TotalMinutesAsleep INT,
-    TotalTimeInBed INT
+    TotalTimeInBed INT,
+    CONSTRAINT PK_sleepy_day PRIMARY KEY (id, SleepDay),
+    CONSTRAINT FK_sleepy_day_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
-CREATE TABLE IF NOT EXISTS weight_log_info (
-    Id BIGINT,
+CREATE TABLE weight_log_info (
+    id BIGINT NOT NULL,
+    LogId BIGINT NOT NULL,
     Date VARCHAR(50),
     WeightKg DOUBLE,
     WeightPounds DOUBLE,
-    Fat INT,
+    Fat DOUBLE,
     BMI DOUBLE,
     IsFromCoef VARCHAR(10),
-    LogId BIGINT
+    CONSTRAINT PK_weight_log_info PRIMARY KEY (id, LogId),
+    CONSTRAINT FK_weight_log_info_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
+CREATE TABLE hourly_calories (
+    id BIGINT NOT NULL,
+    ActivityHour VARCHAR(50) NOT NULL,
+    Calories INT,
+    CONSTRAINT PK_hourly_calories PRIMARY KEY (id, ActivityHour),
+    CONSTRAINT FK_hourly_calories_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE hourly_steps (
+    id BIGINT NOT NULL,
+    ActivityHour VARCHAR(50) NOT NULL,
+    StepTotal INT,
+    CONSTRAINT PK_hourly_steps PRIMARY KEY (id, ActivityHour),
+    CONSTRAINT FK_hourly_steps_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE hourly_intensities (
+    id BIGINT NOT NULL,
+    ActivityHour VARCHAR(50) NOT NULL,
+    TotalIntensity INT,
+    AverageIntensity DOUBLE,
+    CONSTRAINT PK_hourly_intensities PRIMARY KEY (id, ActivityHour),
+    CONSTRAINT FK_hourly_intensities_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE minute_calories (
+    id BIGINT NOT NULL,
+    ActivityMinute VARCHAR(50) NOT NULL,
+    Calories DOUBLE,
+    CONSTRAINT PK_minute_calories PRIMARY KEY (id, ActivityMinute),
+    CONSTRAINT FK_minute_calories_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE minute_steps (
+    id BIGINT NOT NULL,
+    ActivityMinute VARCHAR(50) NOT NULL,
+    Steps INT,
+    CONSTRAINT PK_minute_steps PRIMARY KEY (id, ActivityMinute),
+    CONSTRAINT FK_minute_steps_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE minute_intensities (
+    id BIGINT NOT NULL,
+    ActivityMinute VARCHAR(50) NOT NULL,
+    Intensity INT,
+    CONSTRAINT PK_minute_intensities PRIMARY KEY (id, ActivityMinute),
+    CONSTRAINT FK_minute_intensities_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE minute_mets (
+    id BIGINT NOT NULL,
+    ActivityMinute VARCHAR(50) NOT NULL,
+    METs INT,
+    CONSTRAINT PK_minute_mets PRIMARY KEY (id, ActivityMinute),
+    CONSTRAINT FK_minute_mets_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE minute_sleep (
+    id BIGINT NOT NULL,
+    date VARCHAR(50) NOT NULL,
+    value VARCHAR(50),
+    logId BIGINT,
+    CONSTRAINT PK_minute_sleep PRIMARY KEY (id, date),
+    CONSTRAINT FK_minute_sleep_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE heartrate_seconds (
+    id BIGINT NOT NULL,
+    Time VARCHAR(50) NOT NULL,
+    Value INT,
+    CONSTRAINT PK_heartrate_seconds PRIMARY KEY (id, Time),
+    CONSTRAINT FK_heartrate_seconds_users FOREIGN KEY (id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
 
 -- ============================================================================
--- 2. IMPORTATION DES DONNÉES (LOAD DATA)
+-- 3. IMPORTATION DES DONNÉES (LOAD DATA)
 -- ============================================================================
+
+-- ⚡ CRITIQUE : On désactive la vérification des clés étrangères pour l'import
+SET FOREIGN_KEY_CHECKS = 0;
 
 LOAD DATA LOCAL INFILE 'C:/Mes projets/Etudes de cas formation Data Analyst/Bellabeat/Fitabase_data/dailyActivity_merged.csv'
 INTO TABLE daily_activity FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n' IGNORE 1 ROWS;
@@ -174,8 +207,20 @@ INTO TABLE minute_sleep FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATE
 LOAD DATA LOCAL INFILE 'C:/Mes projets/Etudes de cas formation Data Analyst/Bellabeat/Fitabase_data/heartrate_seconds_merged.csv'
 INTO TABLE heartrate_seconds FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n' IGNORE 1 ROWS;
 
+-- Correction du nom de la table : sleepy_day
 LOAD DATA LOCAL INFILE 'C:/Mes projets/Etudes de cas formation Data Analyst/Bellabeat/Fitabase_data/sleepDay_merged.csv'
-INTO TABLE sleep_day FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n' IGNORE 1 ROWS;
+INTO TABLE sleepy_day FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n' IGNORE 1 ROWS;
 
 LOAD DATA LOCAL INFILE 'C:/Mes projets/Etudes de cas formation Data Analyst/Bellabeat/Fitabase_data/weightLogInfo_merged.csv'
 INTO TABLE weight_log_info FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n' IGNORE 1 ROWS;
+
+-- ============================================================================
+-- 4. ALIMENTATION AUTOMATIQUE DE LA TABLE USERS & RÉACTIVATION DES CLÉS
+-- ============================================================================
+
+-- On extrait tous les ID distincts de la table principale pour remplir 'users'
+INSERT INTO users (id)
+SELECT DISTINCT id FROM daily_activity;
+
+-- CRITIQUE : On réactive la vérification des clés étrangères maintenant que 'users' est peuplée
+SET FOREIGN_KEY_CHECKS = 1;
